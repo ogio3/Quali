@@ -1,26 +1,21 @@
-# Contributing to Quali
+# Contributing
 
-Thank you for contributing! This guide will get you from zero to PR in 5 minutes.
+## Icons
 
-## Adding an Icon
+All icons use a shared base component and follow strict constraints:
 
-### Design Rules
+| Property | Value |
+|----------|-------|
+| viewBox | `0 0 16 16` |
+| stroke-width | `1.5` |
+| stroke-linecap / linejoin | `round` |
+| fill | `none` |
+| stroke | `currentColor` |
+| Optical bounds | 14×14 with 1px padding |
 
-All icons follow these non-negotiable constraints:
+### Adding an icon
 
-| Property | Value | Why |
-|----------|-------|-----|
-| viewBox | `0 0 16 16` | Optimized for 13–20px UI display |
-| stroke-width | `1.5` | Matches DM Sans Regular weight |
-| stroke-linecap | `round` | Reduces pixel noise at small sizes |
-| stroke-linejoin | `round` | Consistent with linecap |
-| fill | `none` | Stroke-only. No exceptions for core icons |
-| stroke | `currentColor` | Inherits parent text color |
-| Optical bounds | 14×14 (1px padding) | Aligns with text cap height |
-
-### Steps
-
-1. Create `src/lib/components/icons/IconYourName.svelte`:
+1. Create `src/lib/components/icons/IconName.svelte`:
 
 ```svelte
 <script lang="ts">
@@ -30,30 +25,27 @@ All icons follow these non-negotiable constraints:
   } = $props();
 </script>
 <IconBase {size} {strokeWidth} class={className} {...rest}>
-  <path d="YOUR PATH HERE" />
+  <path d="..." />
 </IconBase>
 ```
 
-2. Add the export to `src/lib/components/icons/index.ts`:
+2. Export from `src/lib/components/icons/index.ts`.
 
-```ts
-export { default as IconYourName } from './IconYourName.svelte';
-```
-
-3. Verify at `/icons` in dev mode.
+3. Preview at `/icons` in dev mode.
 
 ### Naming
 
-Use **shape-based** names, not semantic names:
+Shape-based, not semantic:
 
 - `IconPlus` not ~~IconAdd~~
-- `IconX` not ~~IconClose~~ or ~~IconDelete~~
+- `IconX` not ~~IconClose~~
 - `IconChevronDown` not ~~IconExpand~~
 
-The meaning comes from context (parent element), not the icon itself.
+Context gives meaning, not the icon.
 
-### PR Checklist
+### PR checklist
 
-- [ ] Icon follows the design rules above
-- [ ] Uses IconBase (no raw `<svg>` tags)
+- [ ] Follows design constraints above
+- [ ] Uses IconBase
 - [ ] Shape-based name
+- [ ] Previewed at `/icons`

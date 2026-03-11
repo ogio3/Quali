@@ -1,51 +1,43 @@
-# Security Policy
+# Security
 
 ## Architecture
 
-Quali is a client-side Progressive Web App. All data is stored in the browser's IndexedDB. The application makes **zero external network requests** — no APIs, no telemetry, no cloud sync.
+Quali is a client-side Progressive Web App. All data is stored in IndexedDB. The application makes **zero external network requests** — no APIs, no telemetry, no cloud sync.
 
-This architecture eliminates entire classes of vulnerabilities (server-side injection, data breaches, man-in-the-middle attacks). The primary attack surface is limited to:
+This architecture eliminates entire classes of vulnerabilities: server-side injection, data breaches, man-in-the-middle attacks.
 
-- **Import sanitization**: Malicious content in imported text files (XSS via document content)
-- **Supply chain**: Compromised npm dependencies
-- **Local storage**: Browser-level IndexedDB access by other origins (mitigated by same-origin policy)
+The remaining attack surface:
 
-## Supported Versions
+- **Import sanitization** — Malicious content in imported files (XSS via document content)
+- **Supply chain** — Compromised npm dependencies
+- **Local storage** — Browser-level IndexedDB access (mitigated by same-origin policy)
 
-| Version | Supported |
-|---------|-----------|
-| Latest  | Yes       |
-| Older   | No        |
+## Measures
 
-We recommend always using the latest version at [quali.ogio.dev](https://quali.ogio.dev).
+| Layer | Protection |
+|-------|-----------|
+| Content Security Policy | `default-src 'self'` — no external resources |
+| Input sanitization | All imported content is sanitized before rendering |
+| Dependency auditing | `npm audit` in CI |
+| No authentication | No credentials to steal — no accounts exist |
+| No network | Verifiable via DevTools Network tab |
 
-## Reporting a Vulnerability
+## Supported versions
 
-If you discover a security vulnerability, please report it responsibly:
+Always use the latest version at [quali.ogio.dev](https://quali.ogio.dev).
 
-1. **Email**: [hi@ogio.dev](mailto:hi@ogio.dev)
-2. **Subject**: `[SECURITY] Quali — Brief description`
-3. **Include**: Steps to reproduce, impact assessment, affected versions
+## Reporting a vulnerability
 
-**Do not** open a public GitHub issue for security vulnerabilities.
+**Email**: [hi@ogio.dev](mailto:hi@ogio.dev)
+**Subject**: `[SECURITY] Quali — Brief description`
+**Include**: Steps to reproduce, impact assessment, affected versions.
 
-### Response timeline
+Do not open a public GitHub issue for security vulnerabilities.
 
 | Severity | Acknowledgment | Patch target |
 |----------|---------------|--------------|
-| Critical | 24 hours      | 72 hours     |
-| High     | 48 hours      | 1 week       |
-| Medium   | 1 week        | Next release |
-| Low      | 1 week        | Best effort  |
+| Critical | 24 hours | 72 hours |
+| High | 48 hours | 1 week |
+| Medium/Low | 1 week | Next release |
 
-## Security measures
-
-- **Content Security Policy**: `default-src 'self'` prevents external resource loading
-- **Input sanitization**: All imported document content is sanitized before rendering
-- **Dependency auditing**: `npm audit` in CI pipeline
-- **No authentication**: No credentials to steal — the tool has no accounts
-- **No network**: Verifiable by monitoring the Network tab in DevTools
-
-## Coordinated Disclosure
-
-We follow a 90-day coordinated disclosure policy. After reporting, we ask that you allow up to 90 days before public disclosure to give us time to develop and release a fix.
+We follow a 90-day coordinated disclosure policy.

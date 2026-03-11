@@ -1,49 +1,94 @@
-# Quali
+<p align="center">
+  <img src="static/icon.svg" width="48" height="48" alt="Quali" />
+</p>
 
-Qualitative coding tool that runs entirely in your browser. Built for academic researchers.
+<h3 align="center">Quali</h3>
 
-## Principles
+<p align="center">
+  Qualitative coding for academic researchers.<br />
+  Runs entirely in your browser. No server. No account. No tracking.
+</p>
 
-- **Local-first** — Your data stays in your browser. No server. No account.
-- **Offline** — Works without internet (PWA).
-- **No telemetry** — No analytics, no cookies, no tracking.
-- **Open source** — MIT License.
-- **Free forever** — No ads, no premium tier.
+<p align="center">
+  <a href="https://quali.ogio.dev">Open Quali</a>&ensp;·&ensp;<a href="#features">Features</a>&ensp;·&ensp;<a href="SECURITY.md">Security</a>&ensp;·&ensp;<a href="CONTRIBUTING.md">Contributing</a>
+</p>
 
-## Features
+---
 
-- Import text documents (paste, drag & drop, file picker — .txt .md .docx)
-- Create codes with curated color palette and keyboard shortcuts (1–9)
-- Select text and assign codes with one click, keypress, or Command Palette (⌘K)
-- Div Overlay highlighting — preserves Arabic, CJK, Devanagari, Thai text shaping
-- Code Retrieval View — click a code to see all segments across documents
-- Analytic memos (project-level and code-linked)
-- Code merge
-- Export: CSV, JSON backup, REFI-QDA (.qdpx)
-- Undo with ⌘Z
+### Why
+
+Existing qualitative tools cost $1,500/year, require installation approval, and upload your data to someone else's server. Interview transcripts contain real people's stories — they deserve better.
+
+Quali keeps everything in your browser's local storage. Open the URL, start coding. Your data never touches a network.
+
+---
+
+### Features
+
+**Core workflow**
+
+- Import documents — paste, drag & drop, or file picker (.txt .md .docx)
+- Select text → assign a code with one click, keyboard shortcut (1–9), or ⌘K palette
+- Visual highlighting that preserves complex scripts (Arabic, CJK, Devanagari, Thai)
+- Code Retrieval — click a code to see every segment across all documents
+- Click a segment to jump back to its context in the source document
+
+**Organization**
+
+- Analytic memos — project-level and linked to individual codes
+- Code merge — combine two codes without losing segments
+- Document rename
+
+**Export**
+
+- CSV (segments with codes and document names)
+- JSON project backup (full round-trip restore)
+- REFI-QDA .qdpx (interoperable with NVivo, ATLAS.ti, MAXQDA)
+
+**Design**
+
 - Dark and light themes
+- Keyboard-driven — ⌘K command palette, 1–9 quick assign, ⌘Z undo
+- Offline-capable PWA
 
-## Privacy
+---
 
-Your data never leaves your browser. All data is stored in IndexedDB on your device. There is no server component — the application is a static site that runs entirely client-side.
+### Principles
 
-This makes Quali suitable for research involving sensitive data, as no data processing agreement (DPA) is required.
+| | |
+|---|---|
+| **Local-first** | Data lives in IndexedDB on your device. Zero network requests. |
+| **No telemetry** | No analytics. No cookies. No fingerprinting. |
+| **Free forever** | No ads. No premium tier. MIT licensed. |
+| **Interoperable** | REFI-QDA export ensures your work is never locked in. |
 
-## Development
+---
 
-```bash
+### Privacy
+
+All data stays in your browser. There is no server component — Quali is a static site. This makes it suitable for sensitive research data without requiring a data processing agreement (DPA).
+
+Open your browser's DevTools Network tab while using Quali. You will see zero outgoing requests.
+
+---
+
+### Development
+
+```
 npm install
 npm run dev
 ```
 
-## Build
+### Build
 
-```bash
+```
 npm run build
 ```
 
-Output is in `build/` — static files ready for any hosting.
+Static output in `build/`, deployable to any hosting.
 
-## License
+---
 
-MIT
+### License
+
+MIT — Tomohito Oginome
