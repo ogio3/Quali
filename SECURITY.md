@@ -2,7 +2,7 @@
 
 ## Architecture
 
-ogio Quali is a client-side Progressive Web App. All data is stored in the browser's IndexedDB. The application makes **zero external network requests** — no APIs, no telemetry, no cloud sync.
+Quali is a client-side Progressive Web App. All data is stored in the browser's IndexedDB. The application makes **zero external network requests** — no APIs, no telemetry, no cloud sync.
 
 This architecture eliminates entire classes of vulnerabilities (server-side injection, data breaches, man-in-the-middle attacks). The primary attack surface is limited to:
 
@@ -17,14 +17,14 @@ This architecture eliminates entire classes of vulnerabilities (server-side inje
 | Latest  | Yes       |
 | Older   | No        |
 
-We recommend always using the latest version at [ogio.dev/quali](https://ogio.dev/quali).
+We recommend always using the latest version at [quali.ogio.dev](https://quali.ogio.dev).
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability, please report it responsibly:
 
 1. **Email**: [hi@ogio.dev](mailto:hi@ogio.dev)
-2. **Subject**: `[SECURITY] ogio Quali — Brief description`
+2. **Subject**: `[SECURITY] Quali — Brief description`
 3. **Include**: Steps to reproduce, impact assessment, affected versions
 
 **Do not** open a public GitHub issue for security vulnerabilities.

@@ -1,4 +1,4 @@
-# Contributing to ogio Quali
+# Contributing to Quali
 
 Thank you for contributing! This guide will get you from zero to PR in 5 minutes.
 

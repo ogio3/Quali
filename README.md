@@ -1,6 +1,6 @@
-# Quali-Lite
+# Quali
 
-Qualitative coding tool that runs entirely in your browser.
+Qualitative coding tool that runs entirely in your browser. Built for academic researchers.
 
 ## Principles
 
@@ -12,19 +12,22 @@ Qualitative coding tool that runs entirely in your browser.
 
 ## Features
 
-- Import text documents (paste, drag & drop .txt/.md/.docx)
-- Create codes with colors and keyboard shortcuts (1-9)
-- Select text and assign codes with one click or keypress
-- Visual highlighting with code colors
-- Export coded segments as CSV
-- Export/import full project backups as JSON
-- Undo with Ctrl/Cmd+Z
+- Import text documents (paste, drag & drop, file picker — .txt .md .docx)
+- Create codes with curated color palette and keyboard shortcuts (1–9)
+- Select text and assign codes with one click, keypress, or Command Palette (⌘K)
+- Div Overlay highlighting — preserves Arabic, CJK, Devanagari, Thai text shaping
+- Code Retrieval View — click a code to see all segments across documents
+- Analytic memos (project-level and code-linked)
+- Code merge
+- Export: CSV, JSON backup, REFI-QDA (.qdpx)
+- Undo with ⌘Z
+- Dark and light themes
 
 ## Privacy
 
 Your data never leaves your browser. All data is stored in IndexedDB on your device. There is no server component — the application is a static site that runs entirely client-side.
 
-This makes Quali-Lite suitable for research involving sensitive data, as no data processing agreement (DPA) is required.
+This makes Quali suitable for research involving sensitive data, as no data processing agreement (DPA) is required.
 
 ## Development
 
