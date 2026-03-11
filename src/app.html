@@ -5,8 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Browser-only qualitative coding tool. Your data never leaves your browser." />
     <meta name="theme-color" content="#0d1117" />
-    <link rel="icon" type="image/png" href="/icon-192.png" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
+    <script>
+      // FOUC prevention: apply theme + density before first paint.
+      // Reads from localStorage; falls back to OS preference (theme) / "default" (density).
+      // Must run synchronously in <head> to avoid flash of unstyled content.
+      (function() {
+        var theme = localStorage.getItem('ql-theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+
+        // Density preset: "default" | "comfortable" | "high"
+        var density = localStorage.getItem('ql-density');
+        if (density && ['comfortable', 'high'].indexOf(density) !== -1) {
+          document.documentElement.setAttribute('data-density', density);
+        }
+
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f4f1ea' : '#1a1d24');
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

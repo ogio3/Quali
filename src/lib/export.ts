@@ -1,4 +1,4 @@
-import type { Project, Document, Code, Segment } from './db';
+import type { Project, Document, Code, Segment, Memo } from './db';
 
 // CSV export with BOM for Excel
 export function exportSegmentsCsv(
@@ -46,16 +46,18 @@ export function exportProjectJson(
   project: Project,
   documents: Document[],
   codes: Code[],
-  segments: Segment[]
+  segments: Segment[],
+  memos: Memo[] = []
 ): string {
   return JSON.stringify({
     version: '1.0',
-    app: 'quali-lite',
+    app: 'ogio-quali',
     exportedAt: new Date().toISOString(),
     project,
     documents,
     codes,
-    segments
+    segments,
+    memos
   }, null, 2);
 }
 

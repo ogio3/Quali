@@ -1,51 +1,559 @@
+@import "tailwindcss";
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * ogio DESIGN SYSTEM v1.0
+ *
+ * Shared visual identity for the ogio tools series (ogio.dev).
+ * Browser-based, local-first, PWA research tools for academic researchers.
+ *
+ * Architecture:
+ *   Layer 1 — BRAND (locked): fonts, easing, brand colors. Shared across all tools.
+ *   Layer 2 — THEME (per-mode): OKLCH color tokens for dark/light. data-theme attr.
+ *   Layer 3 — DENSITY (per-user): rem scaling + contrast presets. data-density attr.
+ *
+ * Switching:
+ *   Color mode  → data-theme="dark|light" on <html>   (FOUC script in app.html)
+ *   Density     → data-density="default|comfortable|high" on <html> (JS at boot)
+ *
+ * Design philosophy: YUGEN (幽玄) — calm, invisible luxury.
+ *   Brand refs: The Row (logoless luxury), Aman (invisible hospitality), mui Lab.
+ *   "Free but looks more expensive than $1,500/year NVivo."
+ *
+ * Research backing:
+ *   - Piepenbrock et al. (2013): positive polarity advantage, halation in dark mode
+ *   - Owsley (2011): age-related contrast sensitivity decline
+ *   - Buchner & Baumgartner (2007): dark mode font weight compensation
+ *   - Hou et al. (2020): 18-24px optimal for elderly readers (59-79 age group)
+ *   - Fitts's Law: motor target size ≥ 44px for reduced fine motor control
+ *
+ * @see style-org/styles/theme.css (upstream color reference)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ LAYER 1 — BRAND CONSTANTS (LOCKED)
+ * │
+ * │ These tokens define the ogio series DNA. Shared across ALL tools.
+ * │ Changing these = changing the brand. Do not override per-tool.
+ * │
+ * │ LOCKED: font families, easing curve, animation duration scale,
+ * │         accent hue (75 = gold/amber), font-smoothing.
+ * │ UNLOCKED per-tool: accent lightness, component-specific spacing.
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+
+/* ── Self-Hosted Variable Fonts ──────────────────────────────────────────────
+ *
+ * Source Serif 4 Variable: document body text (optimized for 50k+ char reading)
+ *   - High x-height, open counters → good dark mode legibility
+ *   - Optical sizing axis (opsz 8-60) → auto-adjusts for font size
+ *   - Weight axis (wght 200-900) → enables per-theme weight tuning
+ *
+ * DM Sans Variable: UI chrome (geometric, clean, never competes with content)
+ *   - Neutral personality, high legibility at small sizes
+ *   - Weight axis (wght 100-1000) → full range for hierarchy
+ *
+ * Self-hosted for PWA offline requirement (no CDN dependency).
+ * Variable fonts = single file covers all weights (fewer HTTP requests).
+ */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  src: url('/fonts/SourceSerif4-Variable.ttf') format('truetype');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  src: url('/fonts/SourceSerif4-Italic-Variable.ttf') format('truetype');
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans Variable';
+  src: url('/fonts/DMSans-Variable.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans Variable';
+  src: url('/fonts/DMSans-Italic-Variable.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+
+/* ── Brand Easing & Motion ───────────────────────────────────────────────────
+ *
+ * Single easing curve for ALL animations across the series.
+ * Expo-out: fast start, gentle deceleration → feels responsive yet calm.
+ * Duration scale: 120ms (micro) / 200ms (standard) / 400ms (emphasis).
+ */
+
 :root {
-  --bg: #0d1117;
-  --bg-elevated: #161b22;
-  --bg-hover: #1c2128;
-  --bg-active: #252c35;
-  --border: #21262d;
-  --border-focus: #388bfd;
-  --text: #e6e1d6;
-  --text-muted: #8b949e;
-  --text-faint: #484f58;
-  --accent: #388bfd;
-  --danger: #f85149;
-  --success: #3fb950;
-  --radius: 6px;
-  --radius-sm: 3px;
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
-  --line-height: 1.75;
-  --transition: 150ms ease;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 400ms;
 }
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ LAYER 2 — THEME TOKENS (color mode)
+ * │
+ * │ OKLCH color space for perceptual uniformity + P3 wide gamut.
+ * │ Switched via data-theme="dark|light" on <html>.
+ * │
+ * │ Naming: --theme-{category}-{variant}
+ * │   bg:     background surfaces (base → elevated → hover → active → overlay)
+ * │   border: lines and separators (default → subtle → focus)
+ * │   text:   content hierarchy (default → secondary → muted → faint)
+ * │   accent: brand interactive color (default → hover → glow)
+ * │   danger/success/warning: semantic feedback
+ * │
+ * │ Font weights vary per theme to compensate for halation effect:
+ * │   Dark mode: lighter weights (text appears bolder due to light bleed)
+ * │   Light mode: heavier weights (positive polarity, no halation)
+ * │   Research: Buchner & Baumgartner (2007), style-org pattern.
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+
+/* ── Dark Theme (YUGEN) — Default ────────────────────────────────────────────
+ *
+ * Background lifted from pure dark (#0d1117) to dark gray (~#1a1d24).
+ * Rationale: reduces halation, prevents OLED black smear on scroll.
+ * Piepenbrock (2013): negative polarity causes pupil dilation → light scatter.
+ *
+ * Text dimmed to ~#c8cdd4 for contrast ~8.5:1 (not max 12.6:1).
+ * Rationale: 7:1-11:1 is the sweet spot for extended reading (8+ hours).
+ * Max contrast (21:1) causes veiling glare and iris strain.
+ *
+ * Accent: Gold/Amber at OKLCH hue 75 — warm, distinctive, YUGEN DNA.
+ */
+
+:root {
+  /* ── Backgrounds (5-step surface elevation) ── */
+  --theme-bg:           oklch(0.268 0.004 107);  /* base canvas */
+  --theme-bg-elevated:  oklch(0.308 0.003 107);  /* panels, cards, sidebars */
+  --theme-bg-hover:     oklch(0.338 0.003 107);  /* interactive hover state */
+  --theme-bg-active:    oklch(0.368 0.003 107);  /* selected/active item */
+  --theme-bg-overlay:   oklch(0.19 0.002 107 / 0.88); /* modal backdrops */
+
+  /* ── Borders (3-level line hierarchy) ── */
+  --theme-border:        oklch(0.40 0.005 95);           /* default separator */
+  --theme-border-subtle: oklch(0.34 0.004 95);           /* quiet divider */
+  --theme-border-focus:  oklch(0.72 0.12 75 / 0.5);     /* focus ring glow */
+
+  /* ── Text (4-level content hierarchy) ──
+   * Ordered by prominence: text > secondary > muted > faint.
+   * Each level drops ~0.13 in OKLCH lightness for even perceptual steps.
+   * "faint" is for decorative/non-essential labels only — never for content. */
+  --theme-text:           oklch(0.88 0.01 95);   /* body text, headings */
+  --theme-text-secondary: oklch(0.75 0.012 97);  /* supporting text, metadata */
+  --theme-text-muted:     oklch(0.62 0.01 95);   /* labels, captions */
+  --theme-text-faint:     oklch(0.50 0.008 95);  /* placeholders, decorative */
+
+  /* ── Accent: Gold/Amber — YUGEN brand color ──
+   * Hue 75 in OKLCH = warm amber. LOCKED across ogio series.
+   * Per-tool: lightness/chroma may shift; hue stays 70-80 range. */
+  --theme-accent:       oklch(0.72 0.12 75);     /* buttons, links, indicators */
+  --theme-accent-hover: oklch(0.78 0.12 75);     /* hover state */
+  --theme-accent-glow:  oklch(0.72 0.12 75 / 0.15); /* focus ring, soft glow */
+
+  /* ── Semantic feedback colors ── */
+  --theme-danger:      oklch(0.626 0.173 24);   /* errors, destructive actions */
+  --theme-danger-bg:   oklch(0.366 0.095 23);   /* error background tint */
+  --theme-success:     oklch(0.59 0.17 137);    /* confirmations, saved */
+  --theme-success-bg:  oklch(0.345 0.112 144);  /* success background tint */
+  --theme-warning:     oklch(0.611 0.128 73);   /* caution, unsaved changes */
+
+  /* ── Selection highlight ── */
+  --theme-selection:   oklch(0.45 0.1 250 / 0.5);
+
+  /* ── Shadows (dark mode: heavier for depth on dark surfaces) ── */
+  --theme-shadow-sm:      0 1px 2px rgb(0 0 0 / 0.3);
+  --theme-shadow-md:      0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --theme-shadow-lg:      0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --theme-shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.04);
+
+  /* ── Font weights (dark mode: reduced for halation compensation) ──
+   * Dark text on light bg = heavier. Light text on dark bg = lighter.
+   * Prevents text from appearing "bolder than intended" due to light bleed.
+   * Research: Buchner & Baumgartner (2007). */
+  --font-weight-normal:   400;
+  --font-weight-medium:   510;
+  --font-weight-semibold: 540;
+  --font-weight-bold:     530;
+
+  /* ── Document reading (dark mode optimized) ──
+   * Separate variables for the reading pane — the hero of the tool.
+   * Researchers read 50,000+ char transcripts for hours; these values
+   * are tuned for extended reading comfort, not UI chrome.
+   *
+   * font-weight 370: lighter than UI to reduce halation in long text.
+   * line-height 1.7: generous for dark mode (research: 1.6-1.65 minimum).
+   * letter-spacing 0.02em: prevents character-level light fusion (crowding).
+   * content-width 65ch: upper bound of optimal 50-65ch for dark mode.
+   * Research: Piepenbrock (2013), Hou et al. (2020). */
+  --doc-font-weight: 370;
+  --doc-font-size: 1.125rem;     /* 18px at default browser (16px base) */
+  --doc-line-height: 1.7;
+  --doc-letter-spacing: 0.02em;
+  --doc-content-width: 65ch;
 }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
+
+/* ── Light Theme (Paper) ─────────────────────────────────────────────────────
+ *
+ * Warm paper-like background (oklch 0.966 ≈ #f4f1ea), not harsh white.
+ * Positive polarity: proven to be easier for aging eyes (Piepenbrock 2013).
+ * Pupil constricts → deeper depth of field → sharper retinal image.
+ *
+ * Higher font weights: no halation compensation needed in light mode.
+ * Accent darkened for contrast compliance on light background.
+ */
+
+:root[data-theme="light"] {
+  --theme-bg:           oklch(0.966 0.009 100);  /* warm paper */
+  --theme-bg-elevated:  oklch(0.949 0.011 95);
+  --theme-bg-hover:     oklch(0.924 0.014 97);
+  --theme-bg-active:    oklch(0.900 0.016 97);
+  --theme-bg-overlay:   oklch(0.966 0.009 100 / 0.88);
+
+  --theme-border:        oklch(0.78 0.012 95);
+  --theme-border-subtle: oklch(0.85 0.01 95);
+  --theme-border-focus:  oklch(0.55 0.12 75 / 0.5);
+
+  --theme-text:           oklch(0.25 0.005 107);
+  --theme-text-secondary: oklch(0.40 0.005 107);
+  --theme-text-muted:     oklch(0.50 0.008 99);
+  --theme-text-faint:     oklch(0.62 0.01 95);
+
+  --theme-accent:       oklch(0.55 0.12 75);     /* darkened for light bg */
+  --theme-accent-hover: oklch(0.50 0.12 75);
+  --theme-accent-glow:  oklch(0.55 0.12 75 / 0.12);
+
+  --theme-danger:      oklch(0.519 0.167 25);
+  --theme-danger-bg:   oklch(0.953 0.014 17);
+  --theme-success:     oklch(0.502 0.147 139);
+  --theme-success-bg:  oklch(0.944 0.032 126);
+  --theme-warning:     oklch(0.505 0.104 75);
+
+  --theme-selection:   oklch(0.55 0.12 75 / 0.2);
+
+  --theme-shadow-sm:      0 1px 2px rgb(0 0 0 / 0.05);
+  --theme-shadow-md:      0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --theme-shadow-lg:      0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
+  --theme-shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.12), 0 0 0 1px rgb(0 0 0 / 0.05);
+
+  /* Light mode: heavier weights (no halation to compensate) */
+  --font-weight-normal:   430;
+  --font-weight-medium:   550;
+  --font-weight-semibold: 580;
+  --font-weight-bold:     600;
+
+  /* Light mode document reading: slightly tighter spacing is comfortable */
+  --doc-font-weight: 400;
+  --doc-font-size: 1.0625rem;   /* 17px at default browser */
+  --doc-line-height: 1.65;
+  --doc-letter-spacing: 0.005em;
+  --doc-content-width: 65ch;
+}
+
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ LAYER 3 — DENSITY PRESETS (user preference)
+ * │
+ * │ Switched via data-density="default|comfortable|high" on <html>.
+ * │ Persisted in localStorage as 'ql-density'.
+ * │
+ * │ Architecture: a single --ql-scale multiplier drives proportional scaling
+ * │ of ALL rem-based values. Components don't need to know about presets —
+ * │ they just use rem units and scale automatically.
+ * │
+ * │ What scales (rem): font sizes, padding, gap, margins.
+ * │ What does NOT scale: 1px borders, box-shadows, border-radius, colors.
+ * │ Rationale: borders and shadows at fractional px look blurry.
+ * │
+ * │ "Comfortable": for users 50+ who want slightly larger everything.
+ * │ "High Visibility": for users 65+ with reduced contrast sensitivity.
+ * │   Research: Owsley (2011), Hou et al. (2020) — 18-24px optimal for 59-79.
+ * │   Contrast elevated to ~12:1 with warm ivory text on deep blue-black bg.
+ * │   Deep Think (2026-03-11): "高級な万年筆のインクと紙" not "病院のカルテ".
+ * │
+ * │ Scale factors:
+ * │   default:     1      (base: 1rem = browser default, typically 16px)
+ * │   comfortable: 1.125  (18px equivalent at default browser)
+ * │   high:        1.25   (20px equivalent at default browser)
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+
+/* ── Default density (no attribute needed — inherits :root values) ── */
+:root {
+  --ql-scale: 1;
+
+  /* UI type scale (rem-based: respects browser font-size preference).
+   * Named by role, not size — "what is it for?" not "how big is it?".
+   * All sizes multiply by --ql-scale so presets work automatically. */
+  --ui-font-xs:   calc(0.625rem * var(--ql-scale));  /* 10px — panel labels, counts */
+  --ui-font-sm:   calc(0.75rem * var(--ql-scale));   /* 12px — sidebar items, metadata */
+  --ui-font-base: calc(0.8125rem * var(--ql-scale)); /* 13px — default UI text */
+  --ui-font-md:   calc(0.875rem * var(--ql-scale));  /* 14px — form inputs, buttons */
+  --ui-font-lg:   calc(1rem * var(--ql-scale));       /* 16px — section headers */
+
+  /* Interactive target minimum height (Fitts's Law).
+   * default: 32px min. comfortable/high: scales up automatically.
+   * Research: WCAG 2.5.5 requires 44px; elderly need 48-60px. */
+  --target-min: calc(2rem * var(--ql-scale));   /* 32px default */
+
+  /* Spacing scale (proportional to density) */
+  --space-1: calc(0.25rem * var(--ql-scale));   /* 4px — tight gaps */
+  --space-2: calc(0.5rem * var(--ql-scale));    /* 8px — item gaps */
+  --space-3: calc(0.75rem * var(--ql-scale));   /* 12px — section gaps */
+  --space-4: calc(1rem * var(--ql-scale));       /* 16px — panel padding */
+  --space-5: calc(1.25rem * var(--ql-scale));   /* 20px — generous padding */
+  --space-6: calc(1.5rem * var(--ql-scale));    /* 24px — section breaks */
+  --space-8: calc(2rem * var(--ql-scale));       /* 32px — large gaps */
+  --space-10: calc(2.5rem * var(--ql-scale));   /* 40px — hero spacing */
+  --space-12: calc(3rem * var(--ql-scale));      /* 48px — page margins */
+}
+
+
+/* ── Comfortable density ─────────────────────────────────────────────────────
+ * For users 50+ who want slightly larger text and targets.
+ * Scales everything by 1.125x (18px base equivalent).
+ * Visual density decreases — fewer items visible, but each is clearer.
+ */
+
+:root[data-density="comfortable"] {
+  --ql-scale: 1.125;
+
+  /* Document reading: slightly larger for comfort */
+  --doc-font-size: 1.25rem;      /* 20px at default browser */
+  --doc-line-height: 1.75;
+}
+
+:root[data-density="comfortable"][data-theme="light"] {
+  --doc-font-size: 1.1875rem;    /* 19px at default browser */
+}
+
+
+/* ── High Visibility density ─────────────────────────────────────────────────
+ * For users 65+ with age-related vision changes (Owsley 2011).
+ * Contrast elevated to ~12:1 — "high-end stationery" not "clinical".
+ *
+ * Deep Think guidance: bg gets slightly bluer (depth), text gets warmer
+ * (ivory). This preserves YUGEN aesthetic while boosting readability.
+ *
+ * Changes:
+ *   - Scale 1.25x (20px base equivalent)
+ *   - Contrast ~12:1 (from 8.5:1)
+ *   - Font weight +50 (thicker strokes for aging eyes)
+ *   - Letter spacing +0.01em (anti-crowding)
+ *   - Code highlights get underlines (color-independent identification)
+ */
+
+:root[data-density="high"] {
+  --ql-scale: 1.25;
+
+  /* Elevated contrast: deep blue-black bg + warm ivory text.
+   * Achieves ~12:1 without going to pure white (which causes glare).
+   * Research: Wang et al. — sweet spot for elderly is 11:1-13:1. */
+  --theme-bg:             oklch(0.20 0.01 250);   /* deeper, slight blue */
+  --theme-bg-elevated:    oklch(0.25 0.008 250);
+  --theme-text:           oklch(0.95 0.02 80);    /* warm ivory */
+  --theme-text-secondary: oklch(0.82 0.015 85);
+  --theme-text-muted:     oklch(0.68 0.012 90);
+  --theme-text-faint:     oklch(0.55 0.01 90);
+  --theme-border:         oklch(0.45 0.008 95);   /* more visible borders */
+
+  /* Heavier font weights: thicker strokes for contrast-impaired vision */
+  --font-weight-normal:   450;
+  --font-weight-medium:   560;
+  --font-weight-semibold: 590;
+  --font-weight-bold:     600;
+
+  /* Document reading: larger, heavier, wider spacing */
+  --doc-font-weight: 420;
+  --doc-font-size: 1.375rem;     /* 22px at default browser */
+  --doc-line-height: 1.75;
+  --doc-letter-spacing: 0.03em;  /* anti-crowding for aging eyes */
+  --doc-content-width: 60ch;     /* shorter lines: easier return sweep */
+}
+
+/* High visibility + light theme: even higher contrast (positive polarity) */
+:root[data-density="high"][data-theme="light"] {
+  --theme-bg:             oklch(0.98 0.005 95);   /* near-white warm paper */
+  --theme-text:           oklch(0.15 0.005 107);  /* near-black */
+  --theme-text-secondary: oklch(0.30 0.005 107);
+  --theme-text-muted:     oklch(0.42 0.008 99);
+  --theme-text-faint:     oklch(0.55 0.008 95);
+  --theme-border:         oklch(0.70 0.012 95);
+
+  --font-weight-normal:   480;
+  --font-weight-medium:   580;
+
+  --doc-font-weight: 450;
+  --doc-font-size: 1.3125rem;   /* 21px at default browser */
+}
+
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ TAILWIND v4 THEME MAPPING
+ * │
+ * │ Maps semantic CSS variables to Tailwind utility classes.
+ * │ Usage: bg-bg, text-primary, border-border, etc.
+ * │
+ * │ This bridge layer lets components use either:
+ * │   - Tailwind utilities: class="bg-bg text-primary"
+ * │   - CSS variables: var(--theme-bg) in <style> blocks
+ * │ Both resolve to the same theme-aware values.
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Colors — semantic layer */
+  --color-bg:           var(--theme-bg);
+  --color-bg-elevated:  var(--theme-bg-elevated);
+  --color-bg-hover:     var(--theme-bg-hover);
+  --color-bg-active:    var(--theme-bg-active);
+  --color-bg-overlay:   var(--theme-bg-overlay);
+
+  --color-border:        var(--theme-border);
+  --color-border-subtle: var(--theme-border-subtle);
+  --color-border-focus:  var(--theme-border-focus);
+
+  --color-primary:   var(--theme-text);
+  --color-secondary: var(--theme-text-secondary);
+  --color-muted:     var(--theme-text-muted);
+  --color-faint:     var(--theme-text-faint);
+
+  --color-accent:      var(--theme-accent);
+  --color-accent-glow: var(--theme-accent-glow);
+  --color-danger:      var(--theme-danger);
+  --color-success:     var(--theme-success);
+
+  /* Typography — brand fonts (LOCKED across ogio series) */
+  --font-ui:   'DM Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Source Serif 4 Variable', 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Spacing (density-aware — scales with --ql-scale) */
+  --spacing-xs:  var(--space-1);
+  --spacing-sm:  var(--space-2);
+  --spacing-md:  var(--space-4);
+  --spacing-lg:  var(--space-6);
+  --spacing-xl:  var(--space-8);
+  --spacing-2xl: var(--space-12);
+
+  /* Radius — does NOT scale with density (fractional px = blurry).
+   * Fixed px-equivalent values via rem at base 16px. */
+  --radius-sm:   0.25rem;    /* 4px */
+  --radius-md:   0.5rem;     /* 8px */
+  --radius-lg:   0.75rem;    /* 12px */
+  --radius-xl:   1rem;       /* 16px */
+  --radius-full: 9999px;
+
+  /* Shadows — theme-aware */
+  --shadow-sm:      var(--theme-shadow-sm);
+  --shadow-md:      var(--theme-shadow-md);
+  --shadow-lg:      var(--theme-shadow-lg);
+  --shadow-overlay: var(--theme-shadow-overlay);
+}
+
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ BASE STYLES
+ * │
+ * │ Global resets and sensible defaults for the ogio series.
+ * │ All components inherit these. Overrides go in component <style> blocks.
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+html {
+  font-optical-sizing: auto;
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 14px;
-  line-height: var(--line-height);
-  -webkit-font-smoothing: antialiased;
+  background: var(--theme-bg);
+  color: var(--theme-text);
+  font-family: var(--font-ui);
+  font-size: var(--ui-font-base);
+  font-weight: var(--font-weight-normal);
+  -webkit-font-smoothing: antialiased;    /* reduces dark mode text bloat on macOS */
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgba(56, 139, 253, 0.3);
+  background: var(--theme-selection);
+  color: var(--theme-text);
 }
 
+
+/* ── Focus Styles ────────────────────────────────────────────────────────────
+ * Visible focus rings for keyboard navigation.
+ * Uses accent color for brand consistency. 2px + 2px offset = clear but elegant.
+ * WCAG 2.4.7 Focus Visible (AA). */
+
+:focus-visible {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline-offset: -1px;
+  border-radius: var(--radius-sm);
+}
+
+
+/* ── Input Defaults ──────────────────────────────────────────────────────────
+ * All form inputs get consistent styling.
+ * Padding uses density-aware spacing. Border stays 1px (no scaling). */
+
+input, select, textarea {
+  font-family: var(--font-ui);
+  font-size: var(--ui-font-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--theme-text);
+  background: var(--theme-bg);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  outline: none;
+  transition: border-color var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px var(--theme-accent-glow);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--theme-text-faint);
+  font-weight: 300;
+}
+
+
+/* ── Font Weight Utilities (theme-aware) ── */
+.font-normal   { font-weight: var(--font-weight-normal); }
+.font-medium   { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold, b, strong { font-weight: var(--font-weight-bold); }
+
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────────
+ * Thin, subtle scrollbars that don't compete with content.
+ * Density-independent: always 5px wide (larger = too prominent for YUGEN). */
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -53,42 +561,165 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--theme-border);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-faint);
+  background: var(--theme-text-faint);
 }
 
-button {
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-  background: none;
-  border: none;
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ ACCESSIBILITY
+ * │
+ * │ OS-level preference media queries.
+ * │ These override theme tokens when the user's OS requests it.
+ * │ Priority: forced-colors > prefers-contrast > prefers-reduced-motion.
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+
+/* ── Reduced Motion ──────────────────────────────────────────────────────────
+ * Respects prefers-reduced-motion for vestibular disorders.
+ * WCAG 2.3.3 Animation from Interactions (AAA). */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ── High Contrast (OS preference) ───────────────────────────────────────────
+ * Automatically boosts contrast when OS requests it.
+ * Works independently of data-density — stacks on top.
+ * WCAG 1.4.6 Contrast (Enhanced). */
+
+@media (prefers-contrast: more) {
+  :root {
+    --theme-text:       oklch(0.95 0.005 95);
+    --theme-text-muted: oklch(0.72 0.01 95);
+    --theme-text-faint: oklch(0.58 0.008 95);
+    --theme-border:     oklch(0.50 0.005 95);
+  }
+
+  :root[data-theme="light"] {
+    --theme-text:       oklch(0.15 0.005 107);
+    --theme-text-muted: oklch(0.35 0.008 99);
+    --theme-text-faint: oklch(0.50 0.008 95);
+    --theme-border:     oklch(0.65 0.012 95);
+  }
+}
+
+
+/* ── Forced Colors (Windows High Contrast) ───────────────────────────────────
+ * When OS overrides all colors, use system keywords.
+ * WCAG 1.4.11 Non-text Contrast. */
+
+@media (forced-colors: active) {
+  * {
+    border-color: CanvasText;
+  }
+
+  :focus-visible {
+    outline: 2px solid Highlight;
+  }
+
+  .ql-segment {
+    outline: 1px solid transparent;
+    outline-offset: -1px;
+  }
+}
+
+
+/* ┌─────────────────────────────────────────────────────────────────────────────
+ * │ COMPONENT STYLES (ogio Quali specific)
+ * │
+ * │ Styles for components that are specific to this tool.
+ * │ Uses theme tokens and density variables — adapts automatically.
+ * │ In future: shared components move to a @ogio/ui package.
+ * └───────────────────────────────────────────────────────────────────────────── */
+
+
+/* ── Coded Text Segments ─────────────────────────────────────────────────────
+ * Highlighted text in the document pane, color-coded by qualitative code.
+ * Per-code colors set via inline styles; these classes handle interaction.
+ *
+ * High Visibility mode adds underlines for color-independent identification.
+ * Research: elderly lens yellowing impairs blue-green-purple discrimination.
+ * Redundant coding (color + underline) ensures codes are always distinguishable. */
+
+.ql-segment {
+  transition: filter var(--duration-fast) var(--ease-out),
+              background-color var(--duration-slow) var(--ease-out);
+  padding: 1px 0;
+  animation: segmentAppear var(--duration-slow) var(--ease-out);
+}
+
+.ql-segment:hover {
+  filter: brightness(1.15);
   cursor: pointer;
 }
 
-input {
-  font-family: inherit;
-  font-size: inherit;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  outline: none;
-  transition: border-color var(--transition);
+.ql-segment:focus-visible {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 1px;
+  border-radius: 2px;
 }
 
-input:focus {
-  border-color: var(--border-focus);
+/* High Visibility: add underline for color-independent code identification */
+:root[data-density="high"] .ql-segment {
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 0;
 }
 
-/* Utility */
-.truncate {
+@keyframes segmentAppear {
+  from {
+    background-color: var(--theme-accent-glow);
+  }
+}
+
+
+/* ── Screen Reader Only ──────────────────────────────────────────────────────
+ * Visually hidden but accessible to screen readers.
+ * Used for aria-live regions, skip links, and supplementary labels. */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+  border-width: 0;
+}
+
+
+/* ── Skip to Content Link ────────────────────────────────────────────────────
+ * Keyboard-only link that appears on Tab press for skip navigation.
+ * WCAG 2.4.1 Bypass Blocks (A). */
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: 9999;
+  padding: var(--space-2) var(--space-4);
+  background: var(--theme-accent);
+  color: var(--theme-bg);
+  font-size: var(--ui-font-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: var(--space-2);
 }

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Maskable icon: full bleed bg, content within safe zone (80% = 410px centered) -->
+  <rect width="512" height="512" fill="#0d1117"/>
+  <g transform="translate(152, 184)">
+    <rect x="0" y="0" width="208" height="5" rx="2.5" fill="#2a3140"/>
+    <rect x="0" y="40" width="208" height="5" rx="2.5" fill="#2a3140"/>
+    <rect x="20" y="35" width="114" height="15" rx="3" fill="#c4a265" opacity="0.25"/>
+    <rect x="20" y="40" width="114" height="5" rx="2.5" fill="#c4a265" opacity="0.7"/>
+    <rect x="0" y="80" width="146" height="5" rx="2.5" fill="#2a3140"/>
+    <circle cx="150" cy="42.5" r="5" fill="#c4a265"/>
+  </g>
+</svg>

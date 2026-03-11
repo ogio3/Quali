@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0d1117"/>
+  <!-- Three horizontal lines representing text, with one highlighted — qualitative coding -->
+  <g transform="translate(128, 160)">
+    <!-- Line 1: plain text -->
+    <rect x="0" y="0" width="256" height="6" rx="3" fill="#2a3140"/>
+    <!-- Line 2: highlighted (coded) segment — the core interaction -->
+    <rect x="0" y="48" width="256" height="6" rx="3" fill="#2a3140"/>
+    <rect x="24" y="42" width="140" height="18" rx="4" fill="#c4a265" opacity="0.25"/>
+    <rect x="24" y="48" width="140" height="6" rx="3" fill="#c4a265" opacity="0.7"/>
+    <!-- Line 3: plain text (shorter) -->
+    <rect x="0" y="96" width="180" height="6" rx="3" fill="#2a3140"/>
+    <!-- Small accent dot — code swatch -->
+    <circle cx="184" cy="51" r="6" fill="#c4a265"/>
+  </g>
+</svg>

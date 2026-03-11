@@ -37,12 +37,23 @@ export interface Segment {
   createdAt: number;
 }
 
+export interface Memo {
+  id: string;
+  projectId: string;
+  codeId: string | null;  // null = project-level memo
+  title: string;
+  content: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
 // Database
 class QualiLiteDB extends Dexie {
   projects!: EntityTable<Project, 'id'>;
   documents!: EntityTable<Document, 'id'>;
   codes!: EntityTable<Code, 'id'>;
   segments!: EntityTable<Segment, 'id'>;
+  memos!: EntityTable<Memo, 'id'>;
 
   constructor() {
     super('quali-lite');
@@ -51,6 +62,13 @@ class QualiLiteDB extends Dexie {
       documents: 'id, projectId, createdAt',
       codes: 'id, projectId, shortcut',
       segments: 'id, projectId, documentId, codeId, startOffset'
+    });
+    this.version(2).stores({
+      projects: 'id, updatedAt',
+      documents: 'id, projectId, createdAt',
+      codes: 'id, projectId, shortcut',
+      segments: 'id, projectId, documentId, codeId, startOffset',
+      memos: 'id, projectId, codeId, updatedAt'
     });
   }
 }
@@ -74,7 +92,8 @@ export async function listProjects(): Promise<Project[]> {
 }
 
 export async function deleteProject(id: string): Promise<void> {
-  await db.transaction('rw', [db.projects, db.documents, db.codes, db.segments], async () => {
+  await db.transaction('rw', [db.projects, db.documents, db.codes, db.segments, db.memos], async () => {
+    await db.memos.where('projectId').equals(id).delete();
     await db.segments.where('projectId').equals(id).delete();
     await db.codes.where('projectId').equals(id).delete();
     await db.documents.where('projectId').equals(id).delete();
@@ -119,6 +138,10 @@ export async function deleteDocument(id: string, projectId: string): Promise<voi
   await touchProject(projectId);
 }
 
+export async function updateDocumentName(id: string, name: string): Promise<void> {
+  await db.documents.update(id, { name });
+}
+
 export async function createCode(projectId: string, name: string, color: string): Promise<Code> {
   const code: Code = {
     id: nanoid(),
@@ -141,7 +164,8 @@ export async function updateCode(id: string, updates: Partial<Pick<Code, 'name' 
 }
 
 export async function deleteCode(id: string): Promise<void> {
-  await db.transaction('rw', [db.codes, db.segments], async () => {
+  await db.transaction('rw', [db.codes, db.segments, db.memos], async () => {
+    await db.memos.where('codeId').equals(id).delete();
     await db.segments.where('codeId').equals(id).delete();
     await db.codes.delete(id);
   });
@@ -184,4 +208,43 @@ export async function listSegmentsByProject(projectId: string): Promise<Segment[
 
 export async function deleteSegment(id: string): Promise<void> {
   await db.segments.delete(id);
+}
+
+export async function mergeCodes(sourceId: string, targetId: string): Promise<number> {
+  return db.transaction('rw', [db.codes, db.segments], async () => {
+    const count = await db.segments.where('codeId').equals(sourceId).modify({ codeId: targetId });
+    await db.codes.delete(sourceId);
+    return count;
+  });
+}
+
+// Memo CRUD
+export async function createMemo(projectId: string, codeId: string | null, title: string): Promise<Memo> {
+  const memo: Memo = {
+    id: nanoid(),
+    projectId,
+    codeId,
+    title,
+    content: '',
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  await db.memos.add(memo);
+  return memo;
+}
+
+export async function updateMemo(id: string, updates: Partial<Pick<Memo, 'title' | 'content'>>): Promise<void> {
+  await db.memos.update(id, { ...updates, updatedAt: Date.now() });
+}
+
+export async function deleteMemo(id: string): Promise<void> {
+  await db.memos.delete(id);
+}
+
+export async function listMemosByProject(projectId: string): Promise<Memo[]> {
+  return db.memos.where('projectId').equals(projectId).reverse().sortBy('updatedAt');
+}
+
+export async function listMemosByCode(codeId: string): Promise<Memo[]> {
+  return db.memos.where('codeId').equals(codeId).toArray();
 }
