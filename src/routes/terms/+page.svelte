@@ -23,7 +23,7 @@
       ogio Quali is distributed under the MIT License. You are free to use, copy,
       modify, merge, publish, distribute, sublicense, and/or sell copies of the
       software, subject to the license terms. The full license text is available in
-      the <a href="https://github.com/ogio3/quali-lite/blob/main/LICENSE" class="link">repository</a>.
+      the <a href="https://github.com/ogio3/Quali/blob/main/LICENSE" class="link">repository</a>.
     </p>
   </section>
 

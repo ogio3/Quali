@@ -22,7 +22,7 @@
       We do not collect usage statistics, crash reports, IP addresses, or any
       identifiable information. No Google Analytics, no Sentry, no hidden trackers.
       You can verify this yourself by inspecting the
-      <a href="https://github.com/ogio3/quali-lite" class="link">source code</a>
+      <a href="https://github.com/ogio3/Quali" class="link">source code</a>
       or monitoring network traffic in your browser's DevTools.
     </p>
   </section>

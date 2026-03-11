@@ -13,8 +13,8 @@ export default defineConfig({
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ttf}']
 			},
 			manifest: {
-				name: 'Quali-Lite',
-				short_name: 'Quali-Lite',
+				name: 'Quali',
+				short_name: 'Quali',
 				description: 'Browser-only qualitative coding tool. Your data never leaves your browser.',
 				start_url: '/',
 				scope: '/',

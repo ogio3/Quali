@@ -137,7 +137,7 @@
     <h2>Report an issue</h2>
     <p>
       If you encounter an accessibility barrier, please
-      <a href="https://github.com/ogio3/quali-lite/issues" class="link">open an issue</a>
+      <a href="https://github.com/ogio3/Quali/issues" class="link">open an issue</a>
       with the label <code>accessibility</code>. We treat accessibility bugs with the
       same priority as functional bugs.
     </p>
