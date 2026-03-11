@@ -10,76 +10,90 @@
 </p>
 
 <p align="center">
-  <a href="https://quali.ogio.dev">Open Quali</a>&ensp;·&ensp;<a href="#features">Features</a>&ensp;·&ensp;<a href="SECURITY.md">Security</a>&ensp;·&ensp;<a href="CONTRIBUTING.md">Contributing</a>
+  <strong><a href="https://quali.ogio.dev">Open Quali →</a></strong>
 </p>
 
 ---
 
-### Why
+### Getting started
 
-Existing qualitative tools cost $1,500/year, require installation approval, and upload your data to someone else's server. Interview transcripts contain real people's stories — they deserve better.
+1. Open **[quali.ogio.dev](https://quali.ogio.dev)** in Chrome, Safari, Firefox, or Edge
+2. Create a project
+3. Drop your interview transcripts (.txt, .md, or .docx)
+4. Select text, assign codes
 
-Quali keeps everything in your browser's local storage. Open the URL, start coding. Your data never touches a network.
+Nothing to install. Works offline after first visit.
+
+---
+
+### Why Quali
+
+Existing tools cost $1,500/year, require IT approval to install, and upload your participants' words to someone else's server.
+
+Quali is different:
+
+- **Open the URL, start coding.** No download, no account, no license key.
+- **Your data stays on your device.** Everything is stored in your browser. Zero network requests — verify it yourself in DevTools.
+- **Free forever.** No ads, no premium tier, no feature gates. Open source (MIT).
+- **Take your work anywhere.** Export to CSV, JSON backup, or REFI-QDA (.qdpx) for NVivo / ATLAS.ti / MAXQDA.
+
+Suitable for sensitive research data — no data processing agreement (DPA) required.
 
 ---
 
 ### Features
 
-**Core workflow**
+**Coding**
 
-- Import documents — paste, drag & drop, or file picker (.txt .md .docx)
 - Select text → assign a code with one click, keyboard shortcut (1–9), or ⌘K palette
-- Visual highlighting that preserves complex scripts (Arabic, CJK, Devanagari, Thai)
-- Code Retrieval — click a code to see every segment across all documents
-- Click a segment to jump back to its context in the source document
+- Visual highlighting that preserves Arabic, CJK, Devanagari, and Thai scripts
+- Code Retrieval — click a code to see every segment across all documents, click to jump to context
+- Undo with ⌘Z
 
 **Organization**
 
 - Analytic memos — project-level and linked to individual codes
 - Code merge — combine two codes without losing segments
-- Document rename
+- Dark and light themes
+- Works offline (PWA)
 
 **Export**
 
-- CSV (segments with codes and document names)
-- JSON project backup (full round-trip restore)
-- REFI-QDA .qdpx (interoperable with NVivo, ATLAS.ti, MAXQDA)
-
-**Design**
-
-- Dark and light themes
-- Keyboard-driven — ⌘K command palette, 1–9 quick assign, ⌘Z undo
-- Offline-capable PWA
+- CSV — segments with codes and document names
+- JSON — full project backup with round-trip restore
+- REFI-QDA .qdpx — interoperable with NVivo, ATLAS.ti, MAXQDA
 
 ---
 
-### Principles
+### Privacy & Security
 
-| | |
-|---|---|
-| **Local-first** | Data lives in IndexedDB on your device. Zero network requests. |
-| **No telemetry** | No analytics. No cookies. No fingerprinting. |
-| **Free forever** | No ads. No premium tier. MIT licensed. |
-| **Interoperable** | REFI-QDA export ensures your work is never locked in. |
+All data stays in your browser's local storage. Quali is a static site with no server component. The application makes zero external network requests.
+
+See [SECURITY.md](SECURITY.md) for the full security policy.
 
 ---
 
-### Privacy
+### License
 
-All data stays in your browser. There is no server component — Quali is a static site. This makes it suitable for sensitive research data without requiring a data processing agreement (DPA).
-
-Open your browser's DevTools Network tab while using Quali. You will see zero outgoing requests.
+MIT — Tomohito Oginome
 
 ---
 
-### Development
+<details>
+<summary><strong>For developers</strong></summary>
+
+#### Tech stack
+
+Svelte 5 · Vite · Dexie.js (IndexedDB) · TypeScript
+
+#### Development
 
 ```
 npm install
 npm run dev
 ```
 
-### Build
+#### Build
 
 ```
 npm run build
@@ -87,8 +101,6 @@ npm run build
 
 Static output in `build/`, deployable to any hosting.
 
----
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-### License
-
-MIT — Tomohito Oginome
+</details>
